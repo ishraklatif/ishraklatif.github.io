@@ -268,6 +268,26 @@
 				transform: scale(1) translateY(0);
 				opacity: 1; pointer-events: all;
 				}
+				#chat-img-btn {
+					width: 36px; height: 36px; flex-shrink: 0;
+					background: var(--chat-bg); border: 1px solid var(--chat-border);
+					border-radius: 9px; cursor: pointer;
+					display: flex; align-items: center; justify-content: center;
+					font-size: 16px; transition: background 0.15s;
+					align-self: flex-end;
+				}
+				#chat-img-btn:hover { background: var(--chat-border) !important; }
+				#chat-img-preview {
+					position: absolute; bottom: 70px; right: 12px;
+					background: var(--chat-surface); border: 1px solid var(--chat-accent);
+					border-radius: 8px; padding: 4px; display: flex; align-items: center; gap: 6px;
+				}
+				#chat-img-preview img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
+				#chat-img-preview button {
+					background: none !important; border: none; color: var(--chat-text-dim) !important;
+					cursor: pointer; font-size: 14px; padding: 2px;
+				}
+				.msg-bubble img { max-width: 100%; border-radius: 8px; margin-top: 6px; display: block; }
 			
 				/* ── Header ── */
 				#chat-header {
@@ -495,9 +515,14 @@
 				</div>
 			
 				<div id="chat-input-area">
-				<textarea id="chat-input" placeholder="Ask me anything..." rows="1"></textarea>
-				<button id="chat-send-btn" title="Send">&#8593;</button>
-				</div>
+					<label id="chat-img-btn" title="Upload image for img2img">
+					  <input type="file" id="chat-img-input" accept="image/*" style="display:none">
+					  📎
+					</label>
+					<div id="chat-img-preview" style="display:none"></div>
+					<textarea id="chat-input" placeholder="Ask me anything or say 'generate a sunset'..." rows="1"></textarea>
+					<button id="chat-send-btn" title="Send">&#8593;</button>
+				  </div>
 				<div class="chat-footer-label">Powered by Llama 3.1 · RAG · Fly.io</div>
 			</div>
 			
@@ -590,40 +615,88 @@
 				status.className   = state ? "chat-header-status loading" : "chat-header-status";
 				}
 			
+				let pendingImage = null;
+
+  document.getElementById("chat-img-input").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      pendingImage = ev.target.result;
+      const preview = document.getElementById("chat-img-preview");
+      preview.style.display = "flex";
+      preview.innerHTML = `
+        <img src="${pendingImage}" alt="preview">
+        <button onclick="clearImage()" title="Remove">✕</button>`;
+      input.placeholder = "Describe how to transform this image...";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  window.clearImage = function() {
+    pendingImage = null;
+    const preview = document.getElementById("chat-img-preview");
+    preview.style.display = "none";
+    preview.innerHTML = "";
+    document.getElementById("chat-img-input").value = "";
+    input.placeholder = "Ask me anything or say 'generate a sunset'...";
+  };
+
 				async function sendMessage() {
-				const text = input.value.trim();
-				if (!text) return;
-				input.value = "";
-				input.style.height = "auto";
-				addMessage("user", text);
-				history.push({ role: "user", content: text });
-				setLoading(true);
-				showTyping();
-			
-				try {
+					const text = input.value.trim();
+					if (!text) return;
+					input.value = "";
+					input.style.height = "auto";
+
+					const imgToSend = pendingImage;
+					if (imgToSend) clearImage();
+
+					// Show user message with image preview if attached
+					const welcome = document.getElementById("chat-welcome-msg");
+					if (welcome) welcome.remove();
+					const userDiv = document.createElement("div");
+					userDiv.className = "chat-msg user";
+					userDiv.innerHTML = `
+					<div class="msg-icon">👤</div>
+					<div class="msg-bubble">${escapeHtml(text)}${imgToSend ? `<br><img src="${imgToSend}" style="max-width:120px;margin-top:6px;border-radius:6px;">` : ""}</div>`;
+					messages.appendChild(userDiv);
+					messages.scrollTop = messages.scrollHeight;
+
+					history.push({ role: "user", content: text });
+					setLoading(true);
+					showTyping();
+
+					try {
 					const res = await fetch(`${BACKEND_URL}/chat`, {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ message: text, history: history.slice(-6) }),
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ message: text, history: history.slice(-6), image: imgToSend || null }),
 					});
 					if (!res.ok) {
-					const err = await res.json().catch(() => ({}));
-					throw new Error(err.detail || `HTTP ${res.status}`);
+						const err = await res.json().catch(() => ({}));
+						throw new Error(err.detail || `HTTP ${res.status}`);
 					}
 					const data = await res.json();
 					removeTyping();
-					addMessage("bot", data.reply);
+
+					const botDiv = document.createElement("div");
+					botDiv.className = "chat-msg bot";
+					const imgHtml = data.image ? `<img src="${data.image}" alt="Generated image" style="max-width:100%;border-radius:8px;margin-top:6px;">` : "";
+					botDiv.innerHTML = `
+						<div class="msg-icon">🤖</div>
+						<div class="msg-bubble">${escapeHtml(data.reply)}${imgHtml}</div>`;
+					messages.appendChild(botDiv);
+					messages.scrollTop = messages.scrollHeight;
+
 					history.push({ role: "assistant", content: data.reply });
-				} catch (err) {
+					} catch (err) {
 					removeTyping();
-					const msg = err.message.includes("504") || err.message.includes("timed out")
-					? "Still warming up — try again in ~30 seconds."
-					: "Couldn't reach the backend. Error: " + err.message;
+					const msg = err.message.includes("504") ? "Still warming up — try again in ~30 seconds." : "Error: " + err.message;
 					addMessage("bot", msg, true);
-				} finally {
+					} finally {
 					setLoading(false);
 					input.focus();
-				}
+					}
 				}
 			
 				function escapeHtml(t) {
