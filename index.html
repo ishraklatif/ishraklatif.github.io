@@ -52,17 +52,24 @@
 							<section class="posts">
 								<article>
 									<header>
-										<h2><a href="https://github.com/ishraklatif/stock_pred" target="_blank">StockPred – Multiseries TFT Forecasting</a></h2>
+										<h2><a href="https://github.com/ishraklatif/stock_pred" target="_blank">StockPred – ASX Equity Return Forecasting</a></h2>
 									</header>
 									<a href="https://github.com/ishraklatif/stock_pred" target="_blank" class="image fit"><img src="" alt="" /></a>
-									<p>A full research-grade time-series forecasting pipeline built with the 
-									<strong>Temporal Fusion Transformer (TFT)</strong> to predict ASX stock prices across 
-									<strong>50+ companies</strong>. Includes feature engineering on OHLCV, macro indices, 
-									commodities, FX, technical indicators, calendar effects and news sentiment.
-									Built with <strong>PyTorch Lightning</strong>, <strong>PyTorch Forecasting</strong> and YAML-driven 
-									configurations, with <strong>hyperparameter search</strong> and <strong>evaluation modules</strong>.</p>
+									<p>
+										A research-grade <strong>cross-sectional equity forecasting pipeline</strong> for the 
+										<strong>ASX 50 universe</strong>, predicting 21-day forward returns across a 
+										<strong>260-feature panel dataset</strong> spanning 2005–2026 (245,000+ samples). 
+										Designed and evaluated five model architectures — <strong>LightGBM, LSTM, 
+										FT-Transformer, TFT, and DLinear</strong> — with rigorous train/val/test splits 
+										across distinct market regimes. Final <strong>LightGBM</strong> model achieved 
+										<strong>Test IC=+0.0544, ICIR=+0.314</strong>, and an annualised 
+										<strong>L/S Sharpe of +0.429</strong>, outperforming all neural architectures 
+										on the held-out 2023–2026 test period. Built with <strong>PyTorch, LightGBM, 
+										and custom multi-task loss</strong> (regression + classification heads), with 
+										YAML-driven configuration and full evaluation modules.
+									</p>
 									<ul class="actions special">
-										<li><a href="https://github.com/ishraklatif/stock_pred" target="_blank" class="button">Git Repo</a></li>
+										<li><a href="https://github.com/ishraklatif/Financial-data" target="_blank" class="button">Git Repo</a></li>
 									</ul>
 								</article>
 								<article>
