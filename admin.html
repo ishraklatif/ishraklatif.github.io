@@ -9,54 +9,56 @@
     <style>
       #admin-login, #admin-panel { max-width: 800px; margin: 0 auto; }
       .form-group { margin-bottom: 1.5em; }
-      .form-group label { display: block; margin-bottom: 0.5em; color: #ccc; font-size: 0.9em; }
+      .form-group label { display: block; margin-bottom: 0.5em; color: #333 !important; font-size: 0.9em; font-weight: 600; }
       .form-group input,
       .form-group textarea,
       .form-group select {
-        width: 100%; padding: 0.75em 1em;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.15);
-        border-radius: 6px; color: #fff;
-        font-size: 0.9em; font-family: inherit;
+        width: 100% !important; padding: 0.75em 1em !important;
+        background: #fff !important;
+        border: 1px solid #ccc !important;
+        border-radius: 6px !important; color: #222 !important;
+        font-size: 0.9em !important; font-family: inherit !important;
       }
-      .form-group textarea { min-height: 300px; resize: vertical; line-height: 1.6; }
+      .form-group input::placeholder,
+      .form-group textarea::placeholder { color: #aaa !important; }
+      .form-group textarea { min-height: 300px !important; resize: vertical; line-height: 1.6; }
       .form-group input:focus,
       .form-group textarea:focus,
       .form-group select:focus {
-        outline: none; border-color: #D97757;
+        outline: none !important; border-color: #D97757 !important; box-shadow: 0 0 0 2px rgba(217,119,87,0.15) !important;
       }
       .hint { font-size: 0.75em; color: #888; margin-top: 0.3em; }
-      .msg-success { color: #4ADE80; padding: 1em; background: rgba(74,222,128,0.1); border-radius: 6px; margin-bottom: 1em; }
-      .msg-error { color: #F87171; padding: 1em; background: rgba(248,113,113,0.1); border-radius: 6px; margin-bottom: 1em; }
+      .msg-success { color: #166534; padding: 1em; background: #dcfce7; border-radius: 6px; margin-bottom: 1em; border: 1px solid #bbf7d0; }
+      .msg-error { color: #991b1b; padding: 1em; background: #fee2e2; border-radius: 6px; margin-bottom: 1em; border: 1px solid #fecaca; }
       .posts-list { margin-top: 2em; }
       .post-item {
         display: flex; justify-content: space-between; align-items: center;
-        padding: 1em; background: rgba(255,255,255,0.05);
+        padding: 1em; background: #f9f9f9;
         border-radius: 6px; margin-bottom: 0.75em;
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid #e5e5e5;
       }
-      .post-item-title { font-weight: 600; }
-      .post-item-meta { font-size: 0.8em; color: #aaa; margin-top: 0.2em; }
+      .post-item-title { font-weight: 600; color: #222; }
+      .post-item-meta { font-size: 0.8em; color: #666; margin-top: 0.2em; }
       .delete-btn {
-        background: rgba(248,113,113,0.2) !important;
-        border: 1px solid #F87171 !important;
-        color: #F87171 !important;
+        background: #fee2e2 !important;
+        border: 1px solid #f87171 !important;
+        color: #991b1b !important;
         padding: 0.4em 0.8em !important;
         font-size: 0.8em !important;
         cursor: pointer; border-radius: 4px;
         transition: background 0.15s;
       }
-      .delete-btn:hover { background: rgba(248,113,113,0.4) !important; }
+      .delete-btn:hover { background: #fecaca !important; }
       .tab-btns { display: flex; gap: 1em; margin-bottom: 2em; }
       .tab-btn {
         padding: 0.6em 1.5em; border-radius: 6px; cursor: pointer;
-        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
-        color: #ccc; font-size: 0.9em;
+        background: #f3f3f3; border: 1px solid #ddd;
+        color: #444; font-size: 0.9em;
       }
-      .tab-btn.active { background: #D97757; border-color: #D97757; color: white; }
+      .tab-btn.active { background: #D97757 !important; border-color: #D97757 !important; color: white !important; }
       .tab-content { display: none; }
       .tab-content.active { display: block; }
-      #login-error { color: #F87171; margin-top: 0.5em; font-size: 0.85em; }
+      #login-error { color: #991b1b; margin-top: 0.5em; font-size: 0.85em; }
     </style>
   </head>
   <body class="is-preload">
