@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Admin - Ishrak Latif</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <style>
+      #admin-login, #admin-panel { max-width: 800px; margin: 0 auto; }
+      .form-group { margin-bottom: 1.5em; }
+      .form-group label { display: block; margin-bottom: 0.5em; color: #ccc; font-size: 0.9em; }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%; padding: 0.75em 1em;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 6px; color: #fff;
+        font-size: 0.9em; font-family: inherit;
+      }
+      .form-group textarea { min-height: 300px; resize: vertical; line-height: 1.6; }
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none; border-color: #D97757;
+      }
+      .hint { font-size: 0.75em; color: #888; margin-top: 0.3em; }
+      .msg-success { color: #4ADE80; padding: 1em; background: rgba(74,222,128,0.1); border-radius: 6px; margin-bottom: 1em; }
+      .msg-error { color: #F87171; padding: 1em; background: rgba(248,113,113,0.1); border-radius: 6px; margin-bottom: 1em; }
+      .posts-list { margin-top: 2em; }
+      .post-item {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 1em; background: rgba(255,255,255,0.05);
+        border-radius: 6px; margin-bottom: 0.75em;
+        border: 1px solid rgba(255,255,255,0.1);
+      }
+      .post-item-title { font-weight: 600; }
+      .post-item-meta { font-size: 0.8em; color: #aaa; margin-top: 0.2em; }
+      .delete-btn {
+        background: rgba(248,113,113,0.2) !important;
+        border: 1px solid #F87171 !important;
+        color: #F87171 !important;
+        padding: 0.4em 0.8em !important;
+        font-size: 0.8em !important;
+        cursor: pointer; border-radius: 4px;
+        transition: background 0.15s;
+      }
+      .delete-btn:hover { background: rgba(248,113,113,0.4) !important; }
+      .tab-btns { display: flex; gap: 1em; margin-bottom: 2em; }
+      .tab-btn {
+        padding: 0.6em 1.5em; border-radius: 6px; cursor: pointer;
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+        color: #ccc; font-size: 0.9em;
+      }
+      .tab-btn.active { background: #D97757; border-color: #D97757; color: white; }
+      .tab-content { display: none; }
+      .tab-content.active { display: block; }
+      #login-error { color: #F87171; margin-top: 0.5em; font-size: 0.85em; }
+    </style>
+  </head>
+  <body class="is-preload">
+    <div id="wrapper" class="fade-in">
+
+      <header id="header">
+        <a href="index.html" class="logo">Portfolio</a>
+      </header>
+
+      <nav id="nav">
+        <ul class="links">
+          <li><a href="index.html">Projects</a></li>
+          <li><a href="assets/res2.pdf" target="_blank">Resume</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </nav>
+
+      <div id="main">
+
+        <!-- Login Gate -->
+        <div id="admin-login">
+          <header class="major">
+            <h1>Admin</h1>
+            <p>Enter your blog password to continue.</p>
+          </header>
+          <div class="form-group">
+            <input type="password" id="login-password" placeholder="Password" />
+            <div id="login-error"></div>
+          </div>
+          <button class="button primary" onclick="doLogin()">Login</button>
+        </div>
+
+        <!-- Admin Panel (hidden until login) -->
+        <div id="admin-panel" style="display:none">
+          <header class="major">
+            <h1>Blog Admin</h1>
+          </header>
+
+          <div class="tab-btns">
+            <button class="tab-btn active" onclick="switchTab('new')">New Post</button>
+            <button class="tab-btn" onclick="switchTab('manage')">Manage Posts</button>
+          </div>
+
+          <!-- New Post Tab -->
+          <div id="tab-new" class="tab-content active">
+            <div id="post-msg"></div>
+            <div class="form-group">
+              <label>Title *</label>
+              <input type="text" id="post-title" placeholder="My Post Title" />
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select id="post-category">
+                <option value="general">General</option>
+                <option value="technical">Technical</option>
+                <option value="research">Research</option>
+                <option value="project">Project Deep Dive</option>
+                <option value="personal">Personal</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tags <span class="hint">(comma separated)</span></label>
+              <input type="text" id="post-tags" placeholder="AI, Python, NLP" />
+            </div>
+            <div class="form-group">
+              <label>Excerpt <span class="hint">(optional — auto-generated from content if blank)</span></label>
+              <input type="text" id="post-excerpt" placeholder="Short summary shown on blog listing..." />
+            </div>
+            <div class="form-group">
+              <label>Content * <span class="hint">(supports **bold**, *italic*, # headings, `code`, > blockquote, - lists)</span></label>
+              <textarea id="post-content" placeholder="Write your post here...&#10;&#10;## Introduction&#10;&#10;Your content here..."></textarea>
+            </div>
+            <button class="button primary" onclick="submitPost()">Publish Post</button>
+          </div>
+
+          <!-- Manage Posts Tab -->
+          <div id="tab-manage" class="tab-content">
+            <div id="manage-msg"></div>
+            <div id="posts-list">
+              <p style="color:#aaa">Loading posts...</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="copyright">
+        <ul><li>&copy; IL</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+      </div>
+
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+      const BACKEND = "https://portfolio-chatbot-backend-icy-fog-6801.fly.dev";
+      let adminPassword = "";
+
+      function doLogin() {
+        const pw = document.getElementById("login-password").value;
+        if (!pw) return;
+        adminPassword = pw;
+        document.getElementById("admin-login").style.display = "none";
+        document.getElementById("admin-panel").style.display = "block";
+        loadManagePosts();
+      }
+
+      document.getElementById("login-password").addEventListener("keydown", e => {
+        if (e.key === "Enter") doLogin();
+      });
+
+      function switchTab(tab) {
+        document.querySelectorAll(".tab-btn").forEach((b, i) => {
+          b.classList.toggle("active", (i === 0 && tab === "new") || (i === 1 && tab === "manage"));
+        });
+        document.getElementById("tab-new").classList.toggle("active", tab === "new");
+        document.getElementById("tab-manage").classList.toggle("active", tab === "manage");
+        if (tab === "manage") loadManagePosts();
+      }
+
+      function showMsg(elId, text, isError = false) {
+        const el = document.getElementById(elId);
+        el.className = isError ? "msg-error" : "msg-success";
+        el.textContent = text;
+        setTimeout(() => el.textContent = "", 4000);
+      }
+
+      async function submitPost() {
+        const title   = document.getElementById("post-title").value.trim();
+        const content = document.getElementById("post-content").value.trim();
+        const category = document.getElementById("post-category").value;
+        const excerpt  = document.getElementById("post-excerpt").value.trim();
+        const tagsRaw  = document.getElementById("post-tags").value.trim();
+        const tags     = tagsRaw ? tagsRaw.split(",").map(t => t.trim()).filter(Boolean) : [];
+
+        if (!title || !content) {
+          showMsg("post-msg", "Title and content are required.", true);
+          return;
+        }
+
+        try {
+          const res = await fetch(`${BACKEND}/posts`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, content, category, excerpt, tags, password: adminPassword })
+          });
+
+          if (res.status === 401) {
+            showMsg("post-msg", "Wrong password.", true);
+            return;
+          }
+          if (!res.ok) throw new Error(await res.text());
+
+          showMsg("post-msg", "Post published successfully!");
+          document.getElementById("post-title").value = "";
+          document.getElementById("post-content").value = "";
+          document.getElementById("post-excerpt").value = "";
+          document.getElementById("post-tags").value = "";
+        } catch (err) {
+          showMsg("post-msg", "Failed to publish: " + err.message, true);
+        }
+      }
+
+      async function loadManagePosts() {
+        const container = document.getElementById("posts-list");
+        try {
+          const res = await fetch(`${BACKEND}/posts`);
+          const posts = await res.json();
+
+          if (!posts.length) {
+            container.innerHTML = "<p style='color:#aaa'>No posts yet.</p>";
+            return;
+          }
+
+          container.innerHTML = posts.map(post => `
+            <div class="post-item">
+              <div>
+                <div class="post-item-title">${post.title}</div>
+                <div class="post-item-meta">${post.category} · ${new Date(post.created_at).toLocaleDateString("en-AU")}</div>
+              </div>
+              <button class="delete-btn" onclick="deletePost('${post.id}', '${post.title.replace(/'/g, "\\'")}')">Delete</button>
+            </div>
+          `).join("");
+        } catch (err) {
+          container.innerHTML = "<p style='color:#F87171'>Failed to load posts.</p>";
+        }
+      }
+
+      async function deletePost(id, title) {
+        if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+        try {
+          const res = await fetch(`${BACKEND}/posts/${id}`, {
+            method: "DELETE",
+            headers: { "x-blog-password": adminPassword }
+          });
+          if (res.status === 401) { showMsg("manage-msg", "Wrong password.", true); return; }
+          if (!res.ok) throw new Error();
+          showMsg("manage-msg", "Post deleted.");
+          loadManagePosts();
+        } catch {
+          showMsg("manage-msg", "Failed to delete post.", true);
+        }
+      }
+    </script>
+  </body>
+</html>

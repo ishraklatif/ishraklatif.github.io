@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Post - Ishrak Latif</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <style>
+      .post-meta { font-size: 0.85em; color: #aaa; margin-bottom: 1.5em; }
+      .post-category {
+        color: #D97757; font-size: 0.8em;
+        text-transform: uppercase; letter-spacing: 0.05em;
+      }
+      .post-tag {
+        display: inline-block; background: rgba(255,255,255,0.1);
+        border-radius: 4px; padding: 2px 8px; font-size: 0.75em;
+        margin-right: 4px;
+      }
+      .post-content { line-height: 1.8; font-size: 1em; }
+      .post-content h2 { margin-top: 2em; }
+      .post-content h3 { margin-top: 1.5em; }
+      .post-content pre {
+        background: rgba(0,0,0,0.3); padding: 1em;
+        border-radius: 6px; overflow-x: auto;
+        font-size: 0.85em;
+      }
+      .post-content code {
+        background: rgba(0,0,0,0.3); padding: 2px 6px;
+        border-radius: 3px; font-size: 0.875em;
+      }
+      .post-content blockquote {
+        border-left: 3px solid #D97757;
+        padding-left: 1em; color: #aaa;
+      }
+      .back-link { margin-bottom: 2em; display: inline-block; }
+      .loading { text-align: center; padding: 3em; color: #aaa; }
+    </style>
+  </head>
+  <body class="is-preload">
+    <div id="wrapper" class="fade-in">
+
+      <header id="header">
+        <a href="index.html" class="logo">Portfolio</a>
+      </header>
+
+      <nav id="nav">
+        <ul class="links">
+          <li><a href="index.html">Projects</a></li>
+          <li><a href="assets/res2.pdf" target="_blank">Resume</a></li>
+          <li class="active"><a href="blog.html">Blog</a></li>
+        </ul>
+        <ul class="icons">
+          <li><a href="https://github.com/ishraklatif" target="_blank" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+          <li><a href="https://www.linkedin.com/in/ishrak-latif-a79235212/" target="_blank" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+        </ul>
+      </nav>
+
+      <div id="main">
+        <a href="blog.html" class="back-link">← Back to Blog</a>
+        <div id="post-container">
+          <div class="loading">Loading post...</div>
+        </div>
+      </div>
+
+      <footer id="footer">
+        <section class="split contact">
+          <section>
+            <h3>Email</h3>
+            <p><a href="mailto:ishrak.latif96@gmail.com">ishrak.latif96@gmail.com</a></p>
+          </section>
+          <section>
+            <h3>Social</h3>
+            <ul class="icons alt">
+              <li><a href="https://www.linkedin.com/in/ishrak-latif-a79235212/" target="_blank" class="icon brands alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+              <li><a href="https://github.com/ishraklatif" target="_blank" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+            </ul>
+          </section>
+        </section>
+      </footer>
+
+      <div id="copyright">
+        <ul><li>&copy; IL</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+      </div>
+
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+      const BACKEND = "https://portfolio-chatbot-backend-icy-fog-6801.fly.dev";
+
+      function formatDate(iso) {
+        return new Date(iso).toLocaleDateString("en-AU", {
+          year: "numeric", month: "long", day: "numeric"
+        });
+      }
+
+      // Simple markdown-like renderer
+      function renderContent(text) {
+        return text
+          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+          .replace(/^### (.+)$/gm, "<h3>$1</h3>")
+          .replace(/^## (.+)$/gm, "<h2>$1</h2>")
+          .replace(/^# (.+)$/gm, "<h1>$1</h1>")
+          .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+          .replace(/\*(.+?)\*/g, "<em>$1</em>")
+          .replace(/`([^`]+)`/g, "<code>$1</code>")
+          .replace(/^> (.+)$/gm, "<blockquote>$1</blockquote>")
+          .replace(/^- (.+)$/gm, "<li>$1</li>")
+          .replace(/(<li>.*<\/li>)/gs, "<ul>$1</ul>")
+          .replace(/\n\n/g, "</p><p>")
+          .replace(/^(?!<[hublp])/gm, "<p>")
+          .replace(/(?<![>])$/gm, "</p>")
+          .replace(/<p><\/p>/g, "");
+      }
+
+      async function loadPost() {
+        const container = document.getElementById("post-container");
+        const params = new URLSearchParams(window.location.search);
+        const slug = params.get("slug");
+
+        if (!slug) {
+          container.innerHTML = "<p>Post not found. <a href='blog.html'>Back to blog</a></p>";
+          return;
+        }
+
+        try {
+          const res = await fetch(`${BACKEND}/posts/${slug}`);
+          if (!res.ok) throw new Error("Not found");
+          const post = await res.json();
+
+          document.title = `${post.title} - Ishrak Latif`;
+
+          container.innerHTML = `
+            <article>
+              <header class="major">
+                <div class="post-meta">
+                  <span class="post-category">${post.category}</span> &nbsp;·&nbsp;
+                  ${formatDate(post.created_at)}
+                </div>
+                <h1>${post.title}</h1>
+                <div>
+                  ${(post.tags || []).map(t => `<span class="post-tag">${t}</span>`).join("")}
+                </div>
+              </header>
+              <div class="post-content">
+                ${renderContent(post.content)}
+              </div>
+            </article>
+          `;
+        } catch (err) {
+          container.innerHTML = `<p>Post not found. <a href="blog.html">Back to blog</a></p>`;
+        }
+      }
+
+      loadPost();
+    </script>
+  </body>
+</html>
