@@ -48,7 +48,16 @@
         cursor: pointer; border-radius: 4px;
         transition: background 0.15s;
       }
-      .delete-btn:hover { background: #fecaca !important; }
+      .edit-btn {
+        background: #dbeafe !important;
+        border: 1px solid #93c5fd !important;
+        color: #1e40af !important;
+        padding: 0.4em 0.8em !important;
+        font-size: 0.8em !important;
+        cursor: pointer; border-radius: 4px;
+        transition: background 0.15s;
+      }
+      .edit-btn:hover { background: #bfdbfe !important; }
       .tab-btns { display: flex; gap: 1em; margin-bottom: 2em; }
       .tab-btn {
         padding: 0.6em 1.5em; border-radius: 6px; cursor: pointer;
@@ -139,6 +148,44 @@
             <div id="manage-msg"></div>
             <div id="posts-list">
               <p style="color:#aaa">Loading posts...</p>
+            </div>
+          </div>
+
+          <!-- Edit Modal -->
+          <div id="edit-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; overflow-y:auto;">
+            <div style="background:#fff; max-width:800px; margin:2em auto; padding:2em; border-radius:8px; position:relative;">
+              <button onclick="closeEdit()" style="position:absolute; top:1em; right:1em; background:none; border:none; font-size:1.5em; cursor:pointer; color:#666;">✕</button>
+              <h2 style="margin-top:0; color:#222;">Edit Post</h2>
+              <input type="hidden" id="edit-id" />
+              <div class="form-group">
+                <label>Title *</label>
+                <input type="text" id="edit-title" />
+              </div>
+              <div class="form-group">
+                <label>Category</label>
+                <select id="edit-category">
+                  <option value="general">General</option>
+                  <option value="technical">Technical</option>
+                  <option value="research">Research</option>
+                  <option value="project">Project Deep Dive</option>
+                  <option value="personal">Personal</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Tags <span class="hint">(comma separated)</span></label>
+                <input type="text" id="edit-tags" />
+              </div>
+              <div class="form-group">
+                <label>Excerpt</label>
+                <input type="text" id="edit-excerpt" />
+              </div>
+              <div class="form-group">
+                <label>Content *</label>
+                <textarea id="edit-content"></textarea>
+              </div>
+              <div id="edit-msg"></div>
+              <button class="button primary" onclick="saveEdit()">Save Changes</button>
+              <button class="button" onclick="closeEdit()" style="margin-left:1em;">Cancel</button>
             </div>
           </div>
 
@@ -244,7 +291,10 @@
                 <div class="post-item-title">${post.title}</div>
                 <div class="post-item-meta">${post.category} · ${new Date(post.created_at).toLocaleDateString("en-AU")}</div>
               </div>
-              <button class="delete-btn" onclick="deletePost('${post.id}', '${post.title.replace(/'/g, "\\'")}')">Delete</button>
+              <div style="display:flex; gap:0.5em;">
+                <button class="edit-btn" onclick="openEdit('${post.id}')">Edit</button>
+                <button class="delete-btn" onclick="deletePost('${post.id}', '${post.title.replace(/'/g, "\\'")}')">Delete</button>
+              </div>
             </div>
           `).join("");
         } catch (err) {
@@ -265,6 +315,60 @@
           loadManagePosts();
         } catch {
           showMsg("manage-msg", "Failed to delete post.", true);
+        }
+      }
+      async function openEdit(id) {
+        // Fetch full post by id
+        const res = await fetch(`${BACKEND}/posts`);
+        const posts = await res.json();
+        const post = posts.find(p => p.id === id);
+        if (!post) return;
+
+        // Fetch full content via slug
+        const res2 = await fetch(`${BACKEND}/posts/${post.slug}`);
+        const full = await res2.json();
+
+        document.getElementById("edit-id").value = full.id;
+        document.getElementById("edit-title").value = full.title;
+        document.getElementById("edit-content").value = full.content;
+        document.getElementById("edit-excerpt").value = full.excerpt || "";
+        document.getElementById("edit-tags").value = (full.tags || []).join(", ");
+        document.getElementById("edit-category").value = full.category || "general";
+        document.getElementById("edit-modal").style.display = "block";
+      }
+
+      function closeEdit() {
+        document.getElementById("edit-modal").style.display = "none";
+        document.getElementById("edit-msg").textContent = "";
+      }
+
+      async function saveEdit() {
+        const id      = document.getElementById("edit-id").value;
+        const title   = document.getElementById("edit-title").value.trim();
+        const content = document.getElementById("edit-content").value.trim();
+        const excerpt = document.getElementById("edit-excerpt").value.trim();
+        const category = document.getElementById("edit-category").value;
+        const tagsRaw = document.getElementById("edit-tags").value.trim();
+        const tags    = tagsRaw ? tagsRaw.split(",").map(t => t.trim()).filter(Boolean) : [];
+
+        if (!title || !content) {
+          showMsg("edit-msg", "Title and content are required.", true);
+          return;
+        }
+
+        try {
+          const res = await fetch(`${BACKEND}/posts/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, content, excerpt, category, tags, password: adminPassword })
+          });
+          if (res.status === 401) { showMsg("edit-msg", "Wrong password.", true); return; }
+          if (!res.ok) throw new Error(await res.text());
+          closeEdit();
+          showMsg("manage-msg", "Post updated successfully!");
+          loadManagePosts();
+        } catch (err) {
+          showMsg("edit-msg", "Failed to save: " + err.message, true);
         }
       }
     </script>
