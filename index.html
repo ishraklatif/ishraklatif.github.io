@@ -19,8 +19,9 @@
 
 				<!-- Intro -->
 					<div id="intro">
-						<h1>Hi, I'm Ishrak</h1>
-						<p>An AI Engineer based in Victoria, Australia - specialized in training and working with deep learning models, <br>currently doing MSc AI in Monash University.<br></p>
+						<h1>Ishrak Latif</h1>
+						<p>AI/ML Engineer &amp; MSc AI Candidate at Monash University<br />
+						Specialising in RAG systems, LLM evaluation, and edge AI deployment.</p>
 						<ul class="actions">
 							<li><a href="#header" class="button icon solid solo fa-arrow-down scrolly">Continue</a></li>
 						</ul>
@@ -48,91 +49,132 @@
 					<div id="main">
 
 						<!-- Featured Post -->
-							
+
+						<!-- VISTA Research -->
+							<section class="vista-research" style="margin-bottom: 3em;">
+								<header class="major" style="margin-bottom: 1em;">
+									<h2>Research</h2>
+								</header>
+								<div style="background: #f7f7f7; border: 1px solid #eeeeee; border-radius: 8px; padding: 2em; margin-bottom: 1.5em;">
+									<div style="display:flex; align-items:flex-start; gap: 1.5em; flex-wrap: wrap;">
+										<div style="flex: 1; min-width: 260px;">
+											<h3 style="margin-top:0; margin-bottom:0.3em;">
+												<span style="color:#D97757;">AI Research Engineer</span>
+											</h3>
+											<p style="margin:0 0 0.4em 0; font-size:0.95em; color:#555555;">
+												Monash VISTA (Vision-based Infrastructure &amp; Smart Technology Applications) &nbsp;·&nbsp; Monash University &nbsp;·&nbsp; Aug 2025 – Present
+											</p>
+											<p style="margin: 0.8em 0; color:#333333;">
+												Contributing to two applied AI research projects as part of Monash University's VISTA team, spanning edge AI hardware and AI education systems.
+											</p>
+
+											<h4 style="margin-bottom:0.3em; color:#D97757;">Edge AI Hardware Platform</h4>
+											<p style="margin: 0 0 0.6em 0; font-size:0.9em; color:#333333;">
+												A low-power edge AI hardware platform for running vision ML/DL models and small language models entirely on-device, targeting 5 field pilots: smart cities, water/stormwater monitoring, bushfire detection, smart transportation, and healthcare.
+											</p>
+											<ul style="margin: 0 0 1em 1.2em; font-size:0.9em; color:#333333;">
+												<li>Evaluated edge compute platforms (NVIDIA Jetson Orin Nano 8GB, Raspberry Pi 5 + Hailo-8L, Rockchip RK3588, Intel N-series) against power envelope, NPU throughput, and PyTorch/ONNX deployment criteria for off-grid solar vs mains-powered profiles</li>
+												<li>Designed a model compression pipeline: knowledge distillation (YOLOv8m/l → YOLOv8n-class student), exported via PyTorch → ONNX → OpenVINO, quantised to INT8 with NNCF, benchmarked for latency/accuracy tradeoffs across CPU and iGPU</li>
+												<li>Synthesized a 10-phase execution plan (Hardware, Software, Business &amp; Admin tracks) from architecture through field pilot deployment</li>
+												<li>Produced hardware spec sheets, risk register, and solar/battery power budget calculations for cross-functional team alignment</li>
+											</ul>
+											<p style="margin:0 0 0.3em 0; font-size:0.82em; color:#555555;">
+												<strong style="color:#333333;">Tech:</strong> ONNX, OpenVINO, NNCF, PyTorch, Intel NUC
+											</p>
+
+											<h4 style="margin: 1.2em 0 0.3em 0; color:#D97757;">Agentic AI Assistant</h4>
+											<p style="margin: 0 0 0.6em 0; font-size:0.9em; color:#333333;">
+												An agentic AI education assistant with a capybara persona — evolved from a RAG chatbot into a tool-calling agent that exposes its retrieval and evaluation capabilities as MCP (Model Context Protocol) tools, making AI/ML concepts engaging and accessible for high school students (ages 14–18) across 8 core topics.
+											</p>
+											<ul style="margin: 0 0 1em 1.2em; font-size:0.9em; color:#333333;">
+												<li>Built a custom Python MCP server exposing hybrid BM25 + dense retrieval, CrossEncoder reranking, and fun-fact generation as callable tools, so any MCP-compatible client can query the knowledge base directly</li>
+												<li>Agentic tool-calling loop lets the LLM decide when to invoke retrieval vs. reason directly vs. generate a fun fact, replacing a fixed retrieve-then-generate pipeline; structured JSON responses (answer, emotion, fun_fact) designed for a future video/audio avatar integration layer</li>
+												<li>LLM-as-Judge evaluation framework with self + cross-model judging and Cohen's kappa scoring vs human annotators</li>
+												<li>Query rewriting, few-shot prompted generation via Groq API; local inference pipeline via Ollama</li>
+												<li>Persona tuned for teen relatability: capybara humor, sparse slang, platform-relevant analogies (For You page, Discord, gaming)</li>
+											</ul>
+											<p style="margin:0; font-size:0.82em; color:#555555;">
+												<strong style="color:#333333;">Tech:</strong> Python, MCP (Model Context Protocol), BM25, FAISS, Ollama, Groq API, CrossEncoder, LLM-as-Judge, Cohen's kappa, FastAPI
+											</p>
+										</div>
+									</div>
+								</div>
+							</section>
+
 						<!-- Posts -->
 							<section class="posts">
+								<!-- Portfolio Chatbot -->
 								<article>
 									<header>
-										<h2><a href="https://github.com/ishraklatif/stock_pred" target="_blank">StockPred – ASX Equity Return Forecasting</a></h2>
+										<h2>Portfolio RAG Chatbot</h2>
 									</header>
-									<a href="https://github.com/ishraklatif/stock_pred" target="_blank" class="image fit"><img src="" alt="" /></a>
 									<p>
-										A research-grade <strong>cross-sectional equity forecasting pipeline</strong> for the 
-										<strong>ASX 50 universe</strong>, predicting 21-day forward returns across a 
-										<strong>260-feature panel dataset</strong> spanning 2005–2026 (245,000+ samples). 
-										Designed and evaluated five model architectures — <strong>LightGBM, LSTM, 
-										FT-Transformer, TFT, and DLinear</strong> — with rigorous train/val/test splits 
-										across distinct market regimes. Final <strong>LightGBM</strong> model achieved 
-										<strong>Test IC=+0.0544, ICIR=+0.314</strong>, and an annualised 
-										<strong>L/S Sharpe of +0.429</strong>, outperforming all neural architectures 
-										on the held-out 2023–2026 test period. Built with <strong>PyTorch, LightGBM, 
-										and custom multi-task loss</strong> (regression + classification heads), with 
-										YAML-driven configuration and full evaluation modules.
+										Production RAG chatbot backend deployed on Fly.io powering this portfolio site. Retrieves context
+										from resume and blog posts (Supabase) using BAAI/bge-small-en-v1.5 embeddings. Features a blog
+										system with admin CRUD panel and a /reload endpoint to refresh the RAG index without redeployment.
+										LLaMA-3.1-8B via HuggingFace router for generation.
+									</p>
+									<p style="font-size:0.82em; color:#555555;">
+										<strong>Tech:</strong> FastAPI · fastembed · Supabase · Fly.io · HuggingFace · LLaMA-3.1-8B · Docker
 									</p>
 									<ul class="actions special">
-										<li><a href="https://github.com/ishraklatif/Financial-data" target="_blank" class="button">Git Repo</a></li>
-									</ul>
-								</article>
-								<article>
-									<header>
-										<h2><a href="https://github.com/ishraklatif/fine-tuned_transformer" target="_blank">Question Classifier – BERT Prefix Tuning & Transformer NLP</a></h2>
-									</header>
-									<a href="https://github.com/ishraklatif/fine-tuned_transformer" target="_blank" class="image fit"><img src="" alt="" /></a>
-									<p>A full-stack NLP application for semantic question classification built with 
-									<strong>PyTorch</strong> and <strong>HuggingFace Transformers</strong>. Implements two deep learning 
-									architectures — a custom <strong>Transformer encoder</strong> with multi-head attention and sinusoidal 
-									positional encoding, and a <strong>BERT prefix tuning</strong> model with a frozen encoder and trainable 
-									soft prefix embeddings. Served via a <strong>FastAPI</strong> REST backend with a 
-									<strong>React + Vite</strong> frontend. Trained on the TREC dataset across 6 semantic categories: 
-									Abbreviation, Description, Entity, Human, Location and Numeric.</p>
-									<ul class="actions special">
-										<li><a href="https://github.com/ishraklatif/fine-tuned_transformer" target="_blank" class="button">Git Repo</a></li>
+										<li><span class="button">Live on This Site</span></li>
 									</ul>
 								</article>
 
+								<!-- StockPred -->
+								<article>
+									<header>
+										<h2><a href="https://github.com/ishraklatif/stock_pred" target="_blank">ASX Equity Forecasting</a></h2>
+									</header>
+									<p>
+										Cross-sectional return forecasting across ASX 50 using a 260-feature panel (245K+ samples, 2005–2026).
+										Selected LightGBM after diagnosing deep learning generalisation failures. Test IC = +0.054,
+										ICIR = +0.314, annualised L/S Sharpe = +0.429. Resolved T4 GPU OOM in TFT by redesigning
+										to a VSN-free linear encoder, reducing GPU memory ~6×.
+									</p>
+									<p style="font-size:0.82em; color:#555555;">
+										<strong>Tech:</strong> Python · LightGBM · PyTorch · TFT · PySpark
+									</p>
+									<ul class="actions special">
+										<li><a href="https://github.com/ishraklatif/stock_pred" target="_blank" class="button">Git Repo</a></li>
+									</ul>
+								</article>
 
+								<!-- RAG Pipeline -->
 								<article>
 									<header>
-										<h2><a href="https://github.com/ishraklatif/bundesliga_analysed" target="_blank">data analysis on football data</a></h2>
+										<h2><a href="https://github.com/ishraklatif/rag_pipeline" target="_blank">RAG Pipeline</a></h2>
 									</header>
-									<a href="https://github.com/ishraklatif/bundesliga_analysed" target="_blank" class="image fit"><img src="" alt="" /></a>
-									<p>This project serves as a reference to different use of <strong>statistical methods</strong> used for data analysis on sports data from Bundesliga, German 1st division football league. <strong>T-test</strong> and <strong>Mann Whitney U-Test</strong> was used for analysis.
-									Utilize Matplotlib's pyplot to create histograms, bar charts, scatterplots to viusalize aggregate results.</p>
-									<ul class="actions special">
-										<li><a href="https://github.com/ishraklatif/bundesliga_analysed" target="_blank" class="button">Git Repo</a></li>
-									</ul>
-								</article>
-								<article>
-									<header>
-										<h2><a href="https://github.com/ishraklatif/number_classifier" target="_blank">detect handwritten digits</a></h2>
-									</header>
-									<a href="https://github.com/ishraklatif/number_classifier" target="_blank" class="image fit"><img src="" alt="" /></a>
-									<p>A <strong>Neural Network</strong> project that can detect handwritten numbers. The dataset was split with a 6:1 ratio for train and test data. Uses <strong>adam optimizer</strong> for stochastic gradient descent and uses <strong>sparse categorical crossentropy</strong> as cost function</p>
-									<ul class="actions special">
-										<li><a href="https://github.com/ishraklatif/number_classifier" target="_blank" class="button">Git Repo</a></li>
-									</ul>
-								</article>
-								<article>
-									<header>
-										<h2><a href="https://github.com/ishraklatif/AI-Surveillance" target="_blank">ai survellance</a></h2>
-									</header>
-									<a href="https://github.com/ishraklatif/AI-Surveillance" target="_blank" class="image fit"><img src="" alt="" /></a>
-									 <p>An integrated design project in college final year. The project is a platform in <strong>Django framework</strong> to stream video surveillance from recording devices, capable of detecting humans and setting off alarms in case of trespassing. Image preprocessing is done using <strong>OpenCV</strong> and trained with a<strong> OpenCV deep neural network</strong> module. The dataset was split with a 60/40 ratio for train and test data. Graded A+ by <strong>HOD Brigadier General Razzak</strong> and forwarded to <strong>military R&D</strong> for further research</p>
-									<ul class="actions special">
-										<li><a href="https://github.com/ishraklatif/AI-Surveillance" target="_blank" class="button">Git Repo</a></li>
-									</ul>
-								</article>
-								<article>
-									<header>
-										<h2><a href="https://github.com/ishraklatif/AI-Surveillance" target="_blank">rag pipeline</a></h2>
-									</header>
-									<a href="https://github.com/ishraklatif/AI-Surveillance" target="_blank" class="image fit"><img src="" alt="" /></a>
-									 <p>A research project on RAG pipeline using open source encoders and foundation llm. Used langchain with sentence transformer and data chunking: <strong>bge-base-en-v1.5</strong> for embeddings in the <strong>vectorstore</strong> in this case a <string>Chromadb</string> store for ingestion, and used <strong>zephyr-7b-alpha</strong> from <strong>HuggingFace</strong> as the foundational model to feed the retrieved query and context in system prompt format for text generation</p>
+									<p>
+										Retrieval-Augmented Generation system using Zephyr-7B and sentence-BERT embeddings for biomedical
+										question answering. Retriever achieved Recall@5 of 0.82. Processed 100K+ PubMed abstracts with
+										ChromaDB vector indexing.
+									</p>
+									<p style="font-size:0.82em; color:#555555;">
+										<strong>Tech:</strong> Zephyr-7B · sentence-BERT · ChromaDB · LangChain · HuggingFace
+									</p>
 									<ul class="actions special">
 										<li><a href="https://github.com/ishraklatif/rag_pipeline" target="_blank" class="button">Git Repo</a></li>
 									</ul>
 								</article>
-								
+
+								<!-- AI Surveillance -->
+								<article>
+									<header>
+										<h2><a href="https://github.com/ishraklatif/AI-Surveillance" target="_blank">AI Surveillance Platform</a></h2>
+									</header>
+									<p>
+										Django-based video surveillance platform with real-time human detection and trespassing alerts using
+										OpenCV and a deep neural network. Graded A+ and forwarded to military R&amp;D for further research.
+									</p>
+									<p style="font-size:0.82em; color:#555555;">
+										<strong>Tech:</strong> Django · OpenCV · Deep Neural Network · Python
+									</p>
+									<ul class="actions special">
+										<li><a href="https://github.com/ishraklatif/AI-Surveillance" target="_blank" class="button">Git Repo</a></li>
+									</ul>
+								</article>
 
 							</section>
 
